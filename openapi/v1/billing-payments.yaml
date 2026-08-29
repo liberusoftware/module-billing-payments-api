@@ -76,6 +76,24 @@ paths:
       responses:
         '200': {$ref: '#/components/responses/Document'}
         '401': {$ref: '#/components/responses/Unauthorized'}
+  /api/v1/billing/payments/{payment}/allocate:
+    post:
+      operationId: billing.payments.allocate
+      summary: Allocate part of a captured payment to an invoice
+      security: [{sanctum: []}]
+      parameters: [{name: payment, in: path, required: true, schema: {type: string}}, {$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount_minor]
+              properties: {amount_minor: {type: integer, minimum: 1}, invoice_id: {type: integer, minimum: 1}}
+      responses:
+        '201': {$ref: '#/components/responses/Document'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '422': {$ref: '#/components/responses/ValidationError'}
 components:
   parameters:
     IdempotencyKey: {name: Idempotency-Key, in: header, required: false, schema: {type: string, maxLength: 255}}
